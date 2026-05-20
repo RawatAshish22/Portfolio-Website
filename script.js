@@ -17,9 +17,19 @@
 
   syncPerformanceMode();
 
-  window.addEventListener("load", () => {
+  function resetPageTransitionState() {
+    const wipe = document.querySelector(".page-wipe");
+    if (wipe) wipe.style.transition = "none";
     document.body.classList.add("ready");
-  });
+    document.body.classList.remove("is-leaving");
+    requestAnimationFrame(() => {
+      if (wipe) wipe.style.transition = "";
+    });
+  }
+
+  resetPageTransitionState();
+  window.addEventListener("load", resetPageTransitionState);
+  window.addEventListener("pageshow", resetPageTransitionState);
 
   function setActiveNav() {
     const page = document.body.dataset.page;

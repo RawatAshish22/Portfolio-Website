@@ -166,10 +166,6 @@ textarea {
   transition: transform 480ms cubic-bezier(0.83, 0, 0.17, 1);
 }
 
-body:not(.ready) .page-wipe {
-  transform: translateY(0);
-}
-
 body.is-leaving .page-wipe {
   transform: translateY(0);
 }
