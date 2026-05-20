@@ -32,28 +32,50 @@
     const toggle = document.querySelector(".nav-toggle");
     const nav = document.querySelector(".site-nav");
     if (!toggle || !nav) return;
+    const mobileNavQuery = window.matchMedia("(max-width: 720px)");
+
+    function closeNav() {
+      document.body.classList.remove("nav-open");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-label", "Open navigation");
+      nav.setAttribute("aria-hidden", mobileNavQuery.matches ? "true" : "false");
+    }
+
+    nav.setAttribute("aria-hidden", mobileNavQuery.matches ? "true" : "false");
 
     toggle.addEventListener("click", () => {
       const isOpen = document.body.classList.toggle("nav-open");
       toggle.setAttribute("aria-expanded", String(isOpen));
       toggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
+      nav.setAttribute("aria-hidden", String(!isOpen && mobileNavQuery.matches));
     });
 
     nav.addEventListener("click", (event) => {
       const link = event.target.closest("a");
       if (!link) return;
-      document.body.classList.remove("nav-open");
-      toggle.setAttribute("aria-expanded", "false");
-      toggle.setAttribute("aria-label", "Open navigation");
+      closeNav();
     });
 
     window.addEventListener("keydown", (event) => {
       if (event.key !== "Escape" || !document.body.classList.contains("nav-open")) return;
-      document.body.classList.remove("nav-open");
-      toggle.setAttribute("aria-expanded", "false");
-      toggle.setAttribute("aria-label", "Open navigation");
+      closeNav();
       toggle.focus();
     });
+
+    const syncNavForViewport = () => {
+      if (!mobileNavQuery.matches) {
+        closeNav();
+        nav.setAttribute("aria-hidden", "false");
+      } else if (!document.body.classList.contains("nav-open")) {
+        nav.setAttribute("aria-hidden", "true");
+      }
+    };
+
+    if (mobileNavQuery.addEventListener) {
+      mobileNavQuery.addEventListener("change", syncNavForViewport);
+    } else if (mobileNavQuery.addListener) {
+      mobileNavQuery.addListener(syncNavForViewport);
+    }
   }
 
   function setupPageTransitions() {
